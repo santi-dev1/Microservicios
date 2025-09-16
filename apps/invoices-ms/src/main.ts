@@ -1,8 +1,16 @@
 import { NestFactory } from '@nestjs/core';
-import { InvoicesMsModule } from './invoices-ms.module';
+import { AppModule } from './app.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create(InvoicesMsModule);
-  await app.listen(process.env.port ?? 3000);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    transport: Transport.TCP,
+    options: {
+      host: '0.0.0.0',             
+      port: +process.env.PORT! || 4103, 
+    },
+  });
+  await app.listen();
+  console.log(`Invoices-MS is running on host 0.0.0.0 and port ${process.env.PORT || 4103}`);
 }
 bootstrap();
